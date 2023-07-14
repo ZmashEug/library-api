@@ -146,8 +146,32 @@ class BookController extends Controller
         return response()->json(['message' => 'Book deleted']);
     }
 
-    public function export()
+    public function export(Request $request)
     {
+        $validator = app('validator')->make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required',
+            'title' => 'required',
+            'description' => 'required',
+            'author' => 'required',
+            'genre' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+
+        $credentials = $request->only('email', 'password');
+
+        $user = User::where('email', $credentials['email'])->first();
+
+        if (!$user || !Hash::check($credentials['password'], $user->password)) {
+            return response()->json(['error' => 'Invalid credentials'], 401);
+        }
+
+        if ($user->role !== 'admin') {
+            return response()->json(['message' => 'Uploading a list of books in csv format requires the admin role'], 403);
+        }
         $books = Book::all();
 
         $csvHeader = ['Title', 'Description'];
