@@ -24,7 +24,7 @@
 2. Скопируйте данный репозиторий:
 
    ```
-   git clone https://github.com/your-username/your-repository.git
+   git clone https://github.com/ZmashEug/library-api
    ```
 4. Установка зависимостей проекта:
 
